@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from keras_preprocessing import image
 from keras.models import load_model
 from keras.applications.vgg16 import preprocess_input
@@ -36,40 +36,23 @@ def main():
     return render_template("index.html")
 
 # Route to handle image submission
-@app.route("/submit", methods=['GET', 'POST'])
+@app.route("/submit", methods=['POST'])
 def get_output():
     if request.method == 'POST':
         img = request.files.get('my_image')
 
-        # Check if image is uploaded
         if img is None or img.filename == '':
-            return render_template("index.html", 
-                                   prediction="No image uploaded. Please upload an image.", 
-                                   img_path=None)
+            return jsonify({'error': 'No image uploaded. Please upload an image.'})
 
-        # Define the path where the image is supposed to be in the static folder
-        img_path = "static/" + img.filename
-        
-        # Check if the image does not exist in the static folder
-        if not os.path.exists(img_path):
-            # Show "Invalid image" message and display a placeholder image
-            invalid_img_path = "static/invalid_image.jpg"  # Make sure this file exists in the static folder
-            return render_template("index.html", 
-                                   prediction="Invalid image. Please upload a valid image.", 
-                                   img_path=invalid_img_path)
+        img_path = os.path.join("static", img.filename)
+        img.save(img_path)
 
-        # If the image exists, proceed with prediction
         p = predict_label(img_path)
 
-        # If prediction is None, show an invalid image and error message
         if p is None:
-            invalid_img_path = "static/invalid_image.jpg"
-            return render_template("index.html", 
-                                   prediction="Invalid image. Please upload a valid image.", 
-                                   img_path=invalid_img_path)
+            return jsonify({'error': 'Invalid image. Please upload a valid image.', 'img_path': 'static/invalid_image.jpg'})
 
-        # If prediction is successful, display the result with the uploaded image
-        return render_template("index.html", prediction=p, img_path=img_path)
+        return jsonify({'prediction': p, 'img_path': img_path})
 
 if __name__ == '__main__':
     # app.debug = True
