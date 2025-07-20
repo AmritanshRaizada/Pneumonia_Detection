@@ -4,7 +4,7 @@ This project is a deep learning-powered web application that detects pneumonia f
 
 ## 🌐 Live Demo
 
-Hosted on **Render**: [Visit Live App]([https://your-app-url.render.com](https://pneumoscan-qcum.onrender.com/))
+Hosted on **Render**: [Visit Live App](https://pneumoscan-qcum.onrender.com/)
 
 ## 📂 Project Structure
 
