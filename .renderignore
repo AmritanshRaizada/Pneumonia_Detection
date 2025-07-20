@@ -1,0 +1,6 @@
+chest_xray/
+train/
+val/
+Test.py
+Pneumonia.py
+graph/
